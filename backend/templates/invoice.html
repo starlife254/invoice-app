@@ -3,115 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Invoice</title>
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<style>
-       @page {
-        size: A4;
-        margin: 20mm;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        font-size: 16px;
-        margin: 0; /* page margin handled by @page */
-        padding: 0;
-    }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: 3px solid #2d4a53;
-        padding-bottom: 15px;
-        margin-bottom: 40px;
-    }
-    .company {
-        font-size: 16px; /* bigger company info */
-    }
-    .company p {
-        margin: 4px 0;
-    }
-    .invoice-info {
-        text-align: right;
-        font-size: 16px; /* bigger invoice details */
-    }
-    .invoice-info h1 {
-        margin: 0;
-        color: #2d4a53;
-        font-size: 28px; /* bigger invoice title */
-    }
-    .section {
-        margin-bottom: 30px;
-        font-size: 16px; /* sections slightly bigger */
-    }
-    .section b {
-        display: block;
-        margin-bottom: 5px;
-        font-size: 18px; /* bigger section titles */
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        font-size: 16px; /* bigger table text */
-    }
-    table th {
-        background: #2d4a53;
-        color: white;
-        padding: 14px;
-        text-align: left;
-        font-size: 17px;
-    }
-    table td {
-        padding: 14px;
-        border-bottom: 1px solid #ddd;
-    }
-    table tr:nth-child(even) {
-        background: #f9f9f9;
-    }
-    .total {
-        text-align: right;
-        font-weight: bold;
-        margin-top: 20px;
-        font-size: 20px; /* total bigger */
-    }
-    .footer {
-        margin-top: 40px;
-        padding: 15px;
-        background: #2d4a53;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        font-size: 15px; /* footer bigger */
-    }
-</style>
-
+    <style>
+        @page { size: A4; margin: 20mm; }
+        body { font-family: 'Poppins', sans-serif; font-size: 16px; margin: 0; padding: 0; }
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #2d4a53; padding-bottom: 15px; margin-bottom: 40px; }
+        .company p { margin: 4px 0; }
+        .invoice-info { text-align: right; font-size: 16px; }
+        .invoice-info h1 { margin: 0; color: #2d4a53; font-size: 28px; }
+        .section { margin-bottom: 30px; }
+        .section b { display: block; margin-bottom: 5px; font-size: 18px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 16px; }
+        table th { background: #2d4a53; color: white; padding: 14px; text-align: left; }
+        table td { padding: 14px; border-bottom: 1px solid #ddd; }
+        table tr:nth-child(even) { background: #f9f9f9; }
+        .total { text-align: right; font-weight: bold; margin-top: 20px; font-size: 20px; }
+        .footer { margin-top: 40px; padding: 15px; background: #2d4a53; color: white; text-align: center; border-radius: 6px; font-size: 15px; }
+    </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="company">
-              <h1>INVOICE</h1>
+            <h1>INVOICE</h1>
             <p><b>Nancy Quality Cakes</b></p>
             <p>P.O Box 35 Kitui</p>
             <p>Tel: 0728700243</p>
         </div>
         <div class="invoice-info">
-          
             <p><b>No:</b> {{ data.invoice_no }}</p>
             <p><b>Date:</b> {{ data.date }}</p>
         </div>
     </div>
 
-    <!-- Bill To -->
     <div class="section">
         <b>Bill To</b>
         <p>{{ data.customer_name }}<br>{{ data.customer_phone }}</p>
     </div>
 
-    <!-- Invoice Table -->
     <div class="section">
         <table>
             <tr>
@@ -125,16 +53,13 @@
         </table>
     </div>
 
-    <!-- Total -->
     <p class="total">TOTAL: Ksh {{ data.amount }}</p>
 
-    <!-- Payment Details -->
     <div class="section">
         <b>Payment Details</b>
         <p>Mpesa: 0728700243 (Nancy Ndunge)</p>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>Thank you for your business!</p>
     </div>

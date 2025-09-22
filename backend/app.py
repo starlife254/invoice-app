@@ -15,13 +15,15 @@ def home():
 def generate_invoice():
     data = request.json
 
-    print("📥 Received data:", data, flush=True)  # <--- DEBUG LINE
+    print("📥 Received data:", data, flush=True)  # Debug line
 
     if not data.get("invoice_no"):
         return {"error": "Invoice number is required"}, 400
 
+    # Render invoice HTML with data
     html = render_template("invoice.html", data=data)
 
+    # Convert HTML → PDF
     pdf_file = io.BytesIO()
     HTML(string=html).write_pdf(pdf_file)
     pdf_file.seek(0)

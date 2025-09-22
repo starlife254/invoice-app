@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+update on automatic invoice number     <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -95,11 +95,41 @@
       text-align: center;
       color: #666;
     }
+
+    /* Loading overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: #2d4a53;
+      z-index: 1000;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2d4a53;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Invoice Generator</h1>
+    <h1>Nancy Quality Cakes Invoice </h1>
     <form id="invoiceForm">
       <div class="form-group">
         <label for="invoice_no">Invoice No:</label>
@@ -131,9 +161,15 @@
         <input type="number" id="amount" name="amount" required>
       </div>
 
-      <button type="submit">Generate Invoice</button>
+      <button type="submit" id="submitBtn">Generate Invoice</button>
     </form>
     <p class="note">PDF will be downloaded automatically after generation.</p>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Generating your invoice... Please wait</p>
   </div>
 
 <script>
@@ -142,13 +178,19 @@
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
 
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const submitBtn = document.getElementById("submitBtn");
+
     try {
+      loadingOverlay.style.display = "flex"; // show spinner
+      submitBtn.disabled = true;
+
       const response = await fetch("https://invoice-app-hvjq.onrender.com/invoice", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          _t: Date.now()   // prevents caching
+          _t: Date.now()   // prevent caching
         })
       });
 
@@ -159,12 +201,18 @@
         a.href = url;
         a.download = `invoice_${data.invoice_no}.pdf`;
         a.click();
+
+        // reset form after success
+        document.getElementById("invoiceForm").reset();
       } else {
         alert("❌ Failed to generate invoice. Server error.");
       }
     } catch (err) {
       alert("⚠️ Could not connect to server. Please try again.");
       console.error(err);
+    } finally {
+      loadingOverlay.style.display = "none"; // hide spinner
+      submitBtn.disabled = false;
     }
   });
 </script>
