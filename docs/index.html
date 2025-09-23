@@ -1,0 +1,221 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nancy Quality Cakes | Invoice Generator</title>
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: #f7f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      max-width: 450px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2d4a53;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #2d4a53;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    button {
+      padding: 12px;
+      background: #2d4a53;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #1c2e33;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 12px;
+      text-align: center;
+      color: #666;
+    }
+
+    /* Loading overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: #2d4a53;
+      z-index: 1000;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2d4a53;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Nancy Quality Cakes Invoice </h1>
+    <form id="invoiceForm">
+      <div class="form-group">
+        <label for="invoice_no">Invoice No:</label>
+        <input type="text" id="invoice_no" name="invoice_no" required>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="customer_name">Customer Name:</label>
+        <input type="text" id="customer_name" name="customer_name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="customer_phone">Customer Phone:</label>
+        <input type="text" id="customer_phone" name="customer_phone" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Amount (Ksh):</label>
+        <input type="number" id="amount" name="amount" required>
+      </div>
+
+      <button type="submit" id="submitBtn">Generate Invoice</button>
+    </form>
+    <p class="note">PDF will be downloaded automatically after generation.</p>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Generating your invoice... Please wait</p>
+  </div>
+
+<script>
+  document.getElementById("invoiceForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const submitBtn = document.getElementById("submitBtn");
+
+    try {
+      loadingOverlay.style.display = "flex"; // show spinner
+      submitBtn.disabled = true;
+
+      const response = await fetch("https://invoice-app-hvjq.onrender.com/invoice", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          _t: Date.now()   // prevent caching
+        })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `invoice_${data.invoice_no}.pdf`;
+        a.click();
+
+        // reset form after success
+        document.getElementById("invoiceForm").reset();
+      } else {
+        alert("❌ Failed to generate invoice. Server error.");
+      }
+    } catch (err) {
+      alert("⚠️ Could not connect to server. Please try again.");
+      console.error(err);
+    } finally {
+      loadingOverlay.style.display = "none"; // hide spinner
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
